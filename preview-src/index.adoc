@@ -304,7 +304,8 @@ If you installed the CLI and the default site generator globally, you can upgrad
 
 Or you can install the metapackage to upgrade both packages at once.
 
- $ npm i -g antora
+[subs=+quotes]
+ $ npm i -g *antora*
 ====
 
 Nominavi luptatum eos, an vim hinc philosophia intellegebat.
