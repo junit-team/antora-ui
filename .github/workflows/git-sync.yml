@@ -1,0 +1,13 @@
+on: workflow_dispatch
+
+jobs:
+  git-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git-sync
+        uses: wei/git-sync@v3
+        with:
+          source_repo: https://gitlab.com/antora/antora-ui-default.git
+          source_branch: master
+          destination_repo: ${{ github.repositoryUrl }}
+          destination_branch: upstream
