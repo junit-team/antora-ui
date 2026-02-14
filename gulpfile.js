@@ -17,8 +17,8 @@ const serverConfig = { host: '0.0.0.0', port: 5252, livereload }
 const task = require('./gulp.d/tasks')
 const glob = {
   all: [srcDir, previewSrcDir],
-  css: `${srcDir}/css/**/*.css`,
-  js: ['gulpfile.js', 'gulp.d/**/*.js', `${srcDir}/helpers/*.js`, `${srcDir}/js/**/+([^.])?(.bundle).js`],
+  css: [`${srcDir}/css/**/*.css`, `!${srcDir}/css/vendor/**`, `!${srcDir}/css/site-extra.css`],
+  js: ['gulpfile.js', 'gulp.d/**/*.js', `${srcDir}/helpers/*.js`, `${srcDir}/js/**/+([^.])?(.bundle).js`, `!${srcDir}/js/vendor/**`],
 }
 
 const cleanTask = createTask({
