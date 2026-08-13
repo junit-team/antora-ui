@@ -48,15 +48,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           FORCE: ${{ inputs.force }}
         run: |
+          CURR="sha256:$(sha256sum ui-bundle.zip | cut --delimiter=' ' --fields=1)"
           PREV_TAG=$(gh release list --json tagName --jq 'map(.tagName) | sort | last // empty')
-          if [ "$FORCE" != "true" ] && [ -n "$PREV_TAG" ] \
-             && gh release download "$PREV_TAG" --pattern ui-bundle.zip.sha256 --output prev.sha256 2>/dev/null \
-             && sha256sum --check --status prev.sha256; then
-            echo "Bundle unchanged; skipping release."
+          PREV=""
+          if [ -n "$PREV_TAG" ]; then
+            PREV=$(gh release view "$PREV_TAG" --json assets \
+              --jq '.assets[] | select(.name == "ui-bundle.zip") | .digest' 2>/dev/null || true)
+          fi
+          if [ "$CURR" = "$PREV" ] && [ "$FORCE" != "true" ]; then
+            echo "Bundle unchanged ($CURR); skipping release."
             exit 0
           fi
-          sha256sum ui-bundle.zip > ui-bundle.zip.sha256
           TAG=$(date --utc +'%Y%m%d-%H%M%S')
-          gh release create "$TAG" ui-bundle.zip ui-bundle.zip.sha256 \
+          gh release create "$TAG" ui-bundle.zip \
             --title "$TAG" \
             --notes 'Antora default UI (bundle-stable) with JUnit customizations.'
