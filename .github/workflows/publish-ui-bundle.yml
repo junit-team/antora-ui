@@ -1,6 +1,14 @@
 name: Publish UI bundle
 
-on: workflow_dispatch
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Publish even if the bundle is unchanged
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -26,21 +34,29 @@ jobs:
       - name: Download upstream bundle
         env:
           BUNDLE_URL: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
-        run: curl -fL -o upstream.zip "$BUNDLE_URL"
+        run: curl --fail --location --output upstream.zip "$BUNDLE_URL"
 
       - name: Overlay supplemental UI
         run: |
           unzip -q upstream.zip -d bundle
-          # -L dereferences the vendor symlinks so real file content
-          # (not broken links) ends up in the bundle.
-          cp -rL supplemental-ui/. bundle/
-          (cd bundle && zip -qr ../ui-bundle.zip .)
+          cp --recursive --dereference supplemental-ui/. bundle/
+          find bundle -exec touch --date=@0 {} +
+          (cd bundle && find . -type f | LC_ALL=C sort | zip --quiet --strip-extra ../ui-bundle.zip --names-stdin)
 
-      - name: Create release
+      - name: Publish release if bundle changed
         env:
           GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ inputs.force }}
         run: |
-          TAG=$(date -u +'%Y%m%d-%H%M%S')
-          gh release create "$TAG" ui-bundle.zip \
+          PREV_TAG=$(gh release list --json tagName --jq 'map(.tagName) | sort | last // empty')
+          if [ "$FORCE" != "true" ] && [ -n "$PREV_TAG" ] \
+             && gh release download "$PREV_TAG" --pattern ui-bundle.zip.sha256 --output prev.sha256 2>/dev/null \
+             && sha256sum --check --status prev.sha256; then
+            echo "Bundle unchanged; skipping release."
+            exit 0
+          fi
+          sha256sum ui-bundle.zip > ui-bundle.zip.sha256
+          TAG=$(date --utc +'%Y%m%d-%H%M%S')
+          gh release create "$TAG" ui-bundle.zip ui-bundle.zip.sha256 \
             --title "$TAG" \
-            --notes "Antora default UI (bundle-stable) with JUnit customizations."
+            --notes 'Antora default UI (bundle-stable) with JUnit customizations.'
