@@ -2,6 +2,6 @@
   "name": "junit-antora-ui",
   "dependencies": {
     "@asciidoctor/tabs": "1.0.0-beta.6",
-    "highlight.js": "11.11.1"
+    "highlight.js": "11.12.0"
   }
 }
