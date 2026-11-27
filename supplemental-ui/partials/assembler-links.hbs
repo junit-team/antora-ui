@@ -2,7 +2,7 @@
     {{#with (resolvePage page.relativeSrcPath model=false)}}
         {{#with ./assembler.pdf}}
         <div class="pdf-link">
-            <a href="{{{relativize ./file.pub.url}}}{{{./fragment}}}">PDF</a>
+            <a href="{{{relativize ./file.pub.url}}}{{{./fragment}}}" title="PDF">PDF</a>
         </div>
         {{/with}}
     {{/with}}
@@ -10,7 +10,7 @@
 {{#with (resolvePage page.relativeSrcPath model=false)}}
     {{#with ./assembler.html}}
         <div class="html-link">
-            <a href="{{{relativize ./file.pub.url}}}{{{./fragment}}}">Single page</a>
+            <a href="{{{relativize ./file.pub.url}}}{{{./fragment}}}" title="Single page">Single page</a>
         </div>
     {{/with}}
 {{/with}}

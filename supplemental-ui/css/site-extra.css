@@ -89,16 +89,195 @@ pre {
     margin: 1.5rem 0;
 }
 
-.pdf-link {
-    margin: .625rem;
-    margin-right: 0;
+/* .75rem between neighbouring toolbar icons, whichever of them are present */
+.pdf-link,
+.html-link {
+    margin: .625rem .375rem;
 }
 
-.html-link {
-    margin: .625rem;
-    margin-left: 1rem;
-    margin-right: .75rem;
+@media screen and (max-width: 1023.5px) {
+    /* breadcrumbs are hidden, so the first icon directly follows the home link */
+    .toolbar .home-link {
+        margin-right: .375rem;
+    }
+
+    /* the toggle's icon sits .625rem inside its 2.5rem button: .75rem to the home icon as well */
+    .toolbar .nav-toggle {
+        margin-right: -.5rem;
+    }
 }
+
+/* Lucide icons from assets.junit.org, drawn as CSS masks so that they take the text colour */
+
+.home-link,
+.home-link.is-current,
+.home-link:hover,
+.nav-toggle,
+.nav-toggle.is-active,
+.nav-item-toggle,
+.nav-menu-toggle,
+.nav-menu-toggle.is-active,
+.page-versions .version-menu-toggle {
+    background-image: none;
+}
+
+.home-link::before,
+.nav-toggle::before,
+.nav-item-toggle::before,
+.nav-menu-toggle::before,
+.page-versions .version-menu-toggle::after,
+.nav-panel-explore .context .version::after,
+.pdf-link a::before,
+.html-link a::before,
+.edit-this-page a::before,
+.doc .source-toolbox .copy-button::before {
+    content: "";
+    display: block;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: auto;
+    background: var(--icon-color, currentColor);
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+}
+
+.home-link {
+    --icon: url(https://assets.junit.org/icons/lucide/house.svg);
+}
+
+.nav-toggle {
+    --icon: url(https://assets.junit.org/icons/lucide/menu.svg);
+}
+
+.nav-toggle.is-active {
+    --icon: url(https://assets.junit.org/icons/lucide/arrow-left.svg);
+}
+
+.nav-item-toggle {
+    --icon: url(https://assets.junit.org/icons/lucide/chevron-right.svg);
+}
+
+.nav-menu-toggle {
+    --icon: url(https://assets.junit.org/icons/lucide/unfold-vertical.svg);
+}
+
+.nav-menu-toggle.is-active {
+    --icon: url(https://assets.junit.org/icons/lucide/fold-vertical.svg);
+}
+
+.page-versions .version-menu-toggle,
+.nav-panel-explore .context .version {
+    --icon: url(https://assets.junit.org/icons/lucide/chevron-down.svg);
+}
+
+.pdf-link a {
+    --icon: url(https://assets.junit.org/icons/lucide/file-down.svg);
+}
+
+.html-link a {
+    --icon: url(https://assets.junit.org/icons/lucide/scroll-text.svg);
+}
+
+.edit-this-page a {
+    --icon: url(https://assets.junit.org/icons/lucide/file-pen.svg);
+}
+
+.doc .source-toolbox .copy-button {
+    --icon: url(https://assets.junit.org/icons/lucide/copy.svg);
+}
+
+.nav-item-toggle::before,
+.page-versions .version-menu-toggle::after,
+.nav-panel-explore .context .version::after,
+.doc .source-toolbox .copy-button::before {
+    width: 1em;
+    height: 1em;
+}
+
+.nav-menu-toggle::before {
+    width: 100%;
+    height: 100%;
+}
+
+.page-versions .version-menu-toggle::after,
+.nav-panel-explore .context .version::after {
+    display: inline-block;
+    vertical-align: -.15em;
+    margin: 0 0 0 .25rem;
+}
+
+.page-versions .version-menu-toggle {
+    padding-right: .5rem;
+}
+
+/* Buttons do not inherit the text colour */
+/* same as the other toolbar icons, which inherit .toolbar's colour */
+.nav-toggle {
+    --icon-color: #5d5d5d;
+}
+
+.nav-menu-toggle {
+    --icon-color: #000;
+}
+
+/* the default UI's #c1c1c1 is too faint for an outline chevron (1.7:1 contrast) */
+.nav-item-toggle {
+    --icon-color: #767676;
+}
+
+:is(
+    .home-link,
+    .nav-toggle,
+    .nav-item-toggle,
+    .nav-menu-toggle,
+    .page-versions .version-menu-toggle,
+    .pdf-link a,
+    .html-link a,
+    .edit-this-page a,
+    .doc .source-toolbox .copy-button
+):is(:hover, :focus-visible) {
+    --icon-color: #222;
+}
+
+/* Prev/next chevrons: same box as the default UI's text glyphs */
+nav.pagination .prev a::before,
+nav.pagination .next a::after {
+    content: "";
+    font-size: 1em;
+    height: 1.3em;
+    background: var(--icon-color, #8e8e8e);
+    /* drawn larger than the box; the chevron only fills the middle of its SVG */
+    -webkit-mask: var(--icon) center / 1.25rem no-repeat;
+    mask: var(--icon) center / 1.25rem no-repeat;
+}
+
+nav.pagination .prev a {
+    --icon: url(https://assets.junit.org/icons/lucide/chevron-left.svg);
+}
+
+nav.pagination .next a {
+    --icon: url(https://assets.junit.org/icons/lucide/chevron-right.svg);
+}
+
+nav.pagination a:is(:hover, :focus-visible) {
+    --icon-color: #222;
+}
+
+/* Icon-only links: the link text stays as the accessible name */
+.pdf-link a,
+.html-link a,
+.toolbar .edit-this-page a {
+    display: block;
+    color: inherit;
+    font-size: 0;
+}
+
+/* site.js adds its own copy icon */
+.doc .source-toolbox .copy-icon {
+    display: none;
+}
+
 
 .version, .version-menu-toggle {
     font-feature-settings: 'tnum';
@@ -106,4 +285,29 @@ pre {
 
 .tabpanel {
     padding: 1em;
+}
+
+/* Desktop: PDF, single page and edit icons grouped at the right, after the version menu */
+@media screen and (min-width: 1024px) {
+    .toolbar .pdf-link,
+    .toolbar .html-link,
+    .toolbar .edit-this-page {
+        order: 1;
+    }
+
+    .toolbar .edit-this-page {
+        margin: .625rem .375rem;
+        padding: 0;
+    }
+
+    /* the toggle's own padding is enough now that icons follow it */
+    .toolbar .page-versions {
+        margin-right: 0;
+    }
+
+    /* align with the right padding of the last .navbar-item ("Home") above;
+       file-pen leaves 3 of its 24 units empty on the right */
+    .toolbar .edit-this-page {
+        margin-right: calc(1rem - 1.25rem * 3 / 24);
+    }
 }
