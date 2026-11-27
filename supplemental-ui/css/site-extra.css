@@ -1,4 +1,7 @@
-body {
+body,
+/* upstream sets Roboto on these explicitly, which is not deployed */
+.doc .source-toolbox,
+.doc .conum[data-value] {
     font-family: "Inter Variable", sans-serif;
     font-optical-sizing: auto;
 }
